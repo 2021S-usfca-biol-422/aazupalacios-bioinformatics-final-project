@@ -71,7 +71,40 @@ vcf_with_metadata <- add_genes_metadata_to_vcfstack(
 
 # Figures
 
-```{r sample-plot}
+```{r sex-figure}
+# create bar plot that organizes samples by male and female
+vcf_with_metadata %>%
+  group_by(sample, host_sex) %>%
+  tally() %>%
+    ggplot(aes(x = host_sex)) +
+    geom_bar() +
+  labs(title = "Count of samples by sex", x = "Sex", y = "Count") +
+  theme_few()
+```
+
+```{r age-figure}
+# create bar plot that organizes samples by age group
+vcf_with_metadata %>%
+  group_by(sample, Host_Age) %>%
+  tally() %>%
+    ggplot(aes(x = Host_Age)) +
+    geom_histogram(bins = 50) +
+  labs(title = "Histogram of samples by host age", x = "Host Age", y = "Frequency") +
+  theme_few()
+```
+
+```{r region-figure}
+# create bar plot that organizes samples by Spanish region
+vcf_with_metadata %>%
+  group_by(sample, `geographic_location_(region_and_locality)`) %>%
+  tally() %>%
+    ggplot(aes(x = `geographic_location_(region_and_locality)`)) +
+    geom_bar() +
+  labs(title = "Count of samples by geographic region", x = "Region", y = "Count") +
+  theme_few()
+```
+
+```{r SNP-plot}
 # create a plot of unique SNP locations within each gene across all samples
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>% # get rid of SNPs not in gene regions
@@ -91,7 +124,7 @@ vcf_with_metadata %>%
 
 # Tables
 
-```{r example-table}
+```{r Gene-table}
 # An example table to show the length of each gene using its start and end
 gene_table %>%
   mutate(length = end - start) %>%
