@@ -23,4 +23,6 @@ Parts of this pipeline approach are based on the pipeline described in the [Data
 ### Change log
 
 * 2021-04-18: Fork repository to GitHub account @aazupalacios
-* 2021-04-18: Update README.md with projet description and change log
+* 2021-04-18: Update README.md with project description and change log
+* 2021-04-30: Run Makefile with 50 reads from the PRJEB43166 bioproject
+* 2021-05-02: Run Report.Rmd to process vcf reads
