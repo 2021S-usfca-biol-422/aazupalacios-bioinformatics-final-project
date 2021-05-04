@@ -26,3 +26,5 @@ Parts of this pipeline approach are based on the pipeline described in the [Data
 * 2021-04-18: Update README.md with project description and change log
 * 2021-04-30: Run Makefile with 50 reads from the PRJEB43166 bioproject
 * 2021-05-02: Run Report.Rmd to process vcf reads
+* 2021-05-03: Run Makefile with 125 reads from the PRJEB43166 bioproject and replace output/Report.pdf
+* 2021-05-04: Run new Report.Rmd to process new vcf reads
