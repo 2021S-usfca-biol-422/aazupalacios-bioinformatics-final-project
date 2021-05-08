@@ -1,5 +1,5 @@
 ---
-title: 'SARS-CoV-2 Variants in Spain'
+title: 'Analyzing SARS-CoV-2 variants among the Spanish Islands and mainland'
 author: "Alexandra Palacios"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
@@ -8,7 +8,7 @@ bibliography: references.bib
 params:
   gff_file_path: "data/metadata/sars_refgenome_annotation.gff"
   vcf_dir_path: "data/11_vcf_output_for_R"
-  sra_runtable_path: "data/00_sra_runtable/SraRunTable_PRJEB43166_50_Reads.txt"
+  sra_runtable_path: "data/00_sra_runtable/SraRunTable_Spanish_Islands_Madrid.txt"
 ---
 
 ```{r setup, include = FALSE}
@@ -20,23 +20,31 @@ knitr::opts_chunk$set(echo = FALSE,
 
 # Background and Overview
 
+
+Here, I analyzed SARS-CoV-2 variants in regions within the different Spanish Islands and compared them with variants found in the Spanish capital, Madrid. 
+
+
 This is a report on SARS-CoV-2, including some variant analysis [@koyama2020variant].
 
 # Methods
 
+## Data Collection
+
+I selected and downloaded a total of 125 SARS-CoV-2 samples from the PRJEB43166 SRA Bioproject located in the NCBI SRA SARS-CoV-2 Bioproject list. This bioproject collected SARS-CoV-2 variant data from individuals of different ages, sex, and geographic region within Spain. 100 of the samples I selected came from localities within the Spanish Islands and were collected by Servicio de Microbiología, Hospital Universitario Son Espases and SeqCOVID-Spain consortium. The other 25 samples came from the Spanish capital, Madrid, and were collected by Hospital General Universitario Gregorio Marañón and SeqCOVID-Spain consortium.
+
+## Variant Analysis
+
+Using a bash pipeline created by [@koyama2020variant] and modified by Naupaka Zimmerman, I then downloaded all the raw Ilumina fastq data selected from the SRA Bioproject, checked the data quality using the , trimmed unwanted sequence data, indexed and mapped sequences against the SARS-CoV-2 reference genome, sorted and processed reads, and configured reads to be processed in R as vcf files. The SARS-CoV-2 reference genome came from the NCBI This entire pipeline was driven by a Makefile.
+
+Next, I loaded in, tidied, and stacked all of the vcf files in R, loaded in a gff file with genome annotations
+
 See the set of tutorials on the [vcfR package website](https://knausb.github.io/vcfR_documentation/index.html).
 
-You may also want to use any of a range of different COVID data packages and data sources:
+# Results
 
-* https://kjhealy.github.io/covdata/
-* https://github.com/como-ph/oxcovid19
-* https://ropensci.org/blog/2020/10/20/searching-medrxivr-and-biorxiv-preprint-data/
-* https://covidtracking.com/data/api
-  * `readr::read_csv("https://api.covidtracking.com/v1/states/daily.csv")`
+# Discussion
 
-## Subsections are ok too
-
-# Results and Discussion
+# Figures
 
 ```{r load-packages-and-functions}
 library("vcfR")
@@ -69,8 +77,6 @@ vcf_with_metadata <- add_genes_metadata_to_vcfstack(
   cleaned_genes_table = gene_table)
 ```
 
-# Figures
-
 ```{r sex-figure}
 # create bar plot that organizes samples by male and female
 vcf_with_metadata %>%
@@ -88,23 +94,45 @@ vcf_with_metadata %>%
   group_by(sample, Host_Age) %>%
   tally() %>%
     ggplot(aes(x = Host_Age)) +
-    geom_histogram(bins = 50) +
+    geom_histogram(bins = 25) +
   labs(title = "Histogram of samples by host age", x = "Host Age", y = "Frequency") +
+  theme_few()
+```
+
+``` {r age-by-sex-figure}
+vcf_with_metadata %>%
+  group_by(sample, Host_Age, host_sex) %>%
+  tally() %>%
+  ggplot(aes(x = Host_Age, fill = host_sex)) +
+  geom_histogram() +
+  facet_wrap(~ host_sex) +
+  theme_few()
+```
+
+``` {r position-figure}
+vcf_with_metadata %>%
+  group_by(sample, pos, host_sex) %>%
+  tally() %>%
+  ggplot(aes(x = pos)) +
+  geom_histogram() +
   theme_few()
 ```
 
 ```{r region-figure}
 # create bar plot that organizes samples by Spanish region
 vcf_with_metadata %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
   group_by(sample, `geographic_location_(region_and_locality)`) %>%
   tally() %>%
     ggplot(aes(x = `geographic_location_(region_and_locality)`)) +
     geom_bar() +
   labs(title = "Count of samples by geographic region", x = "Region", y = "Count") +
-  theme_few()
+  theme(axis.text.x = element_text(angle = 90),
+        panel.background = element_blank(),
+        panel.border = element_rect(fill = NA))
 ```
 
-```{r SNP-plot}
+```{r snp-plot}
 # create a plot of unique SNP locations within each gene across all samples
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>% # get rid of SNPs not in gene regions
@@ -124,7 +152,41 @@ vcf_with_metadata %>%
 
 # Tables
 
-```{r Gene-table}
+``` {r spike-variant-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>%
+  group_by(ref, alt, pos, gene) %>%
+  filter(gene == "S") %>%
+  tally() %>%
+  select(ref, alt, pos, gene, n) %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Count"),
+               align = "c")
+```
+
+**Table X**: Counts of individual variants for the spike protein from all 125 samples.
+
+``` {r spike-variant-region-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>%
+  group_by(ref, alt, pos, gene, `geographic_location_(region_and_locality)`) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+  filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
+  tally() %>%
+  select(ref, alt, pos, gene, `geographic_location_(region_and_locality)`, n) %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+```{r gene-table}
 # An example table to show the length of each gene using its start and end
 gene_table %>%
   mutate(length = end - start) %>%
@@ -135,6 +197,6 @@ gene_table %>%
                              "Length"))
 ```
 
-**Table 1**: Gene names, locations, and lengths in the SARS-CoV-2 genome. Higher SNP counts in the S and N genes may be related to the larger size of these genes.
+**Table 2**: Gene names, locations, and lengths in the SARS-CoV-2 genome. Higher SNP counts in the S and N genes may be related to the larger size of these genes.
 
 # Sources Cited
