@@ -25,7 +25,7 @@
 ##INFO=<ID=DP4,Number=4,Type=Integer,Description="Number of high-quality ref-forward , ref-reverse, alt-forward and alt-reverse bases">
 ##INFO=<ID=MQ,Number=1,Type=Integer,Description="Average mapping quality">
 ##bcftools_callVersion=1.10.2+htslib-1.10.2-3
-##bcftools_callCommand=call --ploidy 1 -m -v -o /data/sars_vcf_analysis/10_vcf_called/ERR5696908_1.trim.fastq.bwa-output.sorted.bam.raw.bcf.variants.vcf /data/sars_vcf_analysis/09_bcf_variants/ERR5696908_1.trim.fastq.bwa-output.sorted.bam.raw.bcf; Date=Tue May  4 07:53:36 2021
+##bcftools_callCommand=call --ploidy 1 -m -v -o /data/sars_vcf_analysis/10_vcf_called/ERR5696908_1.trim.fastq.bwa-output.sorted.bam.raw.bcf.variants.vcf /data/sars_vcf_analysis/09_bcf_variants/ERR5696908_1.trim.fastq.bwa-output.sorted.bam.raw.bcf; Date=Sat May  8 21:24:39 2021
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	/data/sars_vcf_analysis/07_mapped_sorted_bam/ERR5696908_1.trim.fastq.bwa-output.sorted.bam
 NC_045512.2	8782	.	C	T	225	.	DP=268;VDB=0.0043116;SGB=-0.693147;MQSB=1;MQ0F=0;AC=1;AN=1;DP4=0,0,198,48;MQ=60	GT:PL	1:255,0
 NC_045512.2	26088	.	C	T	225	.	DP=262;VDB=1.46798e-08;SGB=-0.693147;MQSB=1;MQ0F=0;AC=1;AN=1;DP4=0,0,193,67;MQ=60	GT:PL	1:255,0
