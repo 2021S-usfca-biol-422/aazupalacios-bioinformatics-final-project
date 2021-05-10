@@ -8,7 +8,7 @@ bibliography: references.bib
 params:
   gff_file_path: "data/metadata/sars_refgenome_annotation.gff"
   vcf_dir_path: "data/11_vcf_output_for_R"
-  sra_runtable_path: "data/00_sra_runtable/SraRunTable_Balearic_Islands_Mainland.txt"
+  sra_runtable_path: "data/00_sra_runtable/SraRunTable_Balearic_Islands_Madrid.txt"
 ---
 
 ```{r setup, include = FALSE}
@@ -136,14 +136,14 @@ vcf_with_metadata %>%
          x = "Gene Name",
          y = "Count") +
   labs(fill = "Gene") +
-    scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
 
 **Figure 1**: N and S genes have more unique SNPs in the set of samples analyzed.
 
-``` {r spike-variant-Madrid-figure}
+``` {r spike-variant-Mainland-figure}
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>%
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
@@ -158,7 +158,7 @@ vcf_with_metadata %>%
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
-    scale_fill_manual(values = c("dodgerblue3", "grey50", "palegreen4", "cadetblue3", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
@@ -168,10 +168,7 @@ vcf_with_metadata %>%
   filter(!is.na(gene)) %>%
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("Inca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-    mutate(`geographic_location_(region_and_locality)` = gsub("Manacor", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-    mutate(`geographic_location_(region_and_locality)` = gsub("Palma", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-    mutate(`geographic_location_(region_and_locality)` = gsub("Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
   filter(`geographic_location_(region_and_locality)` == "Mallorca") %>%
   tally() %>%
   group_by(gene) %>%
@@ -182,7 +179,7 @@ vcf_with_metadata %>%
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
-    scale_fill_manual(values = c("dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
@@ -202,7 +199,7 @@ vcf_with_metadata %>%
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
-    scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "darkseagreen", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
@@ -213,7 +210,8 @@ vcf_with_metadata %>%
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>%
   group_by(ref, alt, pos, gene, `geographic_location_(region_and_locality)`) %>%
-  filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+filter(`geographic_location_(region_and_locality)` != "Madrid") %>%
   filter(gene == "S") %>%
   tally() %>%
   select(ref, alt, pos, gene, `geographic_location_(region_and_locality)`, n) %>%
@@ -231,14 +229,8 @@ vcf_with_metadata %>%
   filter(!is.na(gene)) %>%
   mutate(pos = as.character(pos)) %>%
   mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Inca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Manacor", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Palma", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Santa_Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+   mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
   filter(gene == "N") %>%
   tally() %>%
@@ -249,7 +241,7 @@ vcf_with_metadata %>%
        x = "Position",
        y = "Count") +
   labs(fill = "Region") +
-  scale_fill_manual(values = c("dodgerblue3", "grey50", "palegreen4")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(axis.text.x = element_text(angle = 90),
         panel.border = element_rect(fill = NA))
  
@@ -258,10 +250,10 @@ vcf_with_metadata %>%
 ``` {r spike-variant-Mallorca-table}
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>%
-  filter(`geographic_location_(region_and_locality)` != "Madrid") %>%
-  filter(`geographic_location_(region_and_locality)` != "Ibiza") %>%
-  mutate(Region = rep("Mallorca")) %>%
-  group_by(ref, alt, pos, gene, Region) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+ mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  group_by(ref, alt, pos, gene, `geographic_location_(region_and_locality)`) %>%
+  filter(`geographic_location_(region_and_locality)` == "Mallorca") %>%
   filter(gene == "S") %>%
   tally() %>%
   knitr::kable(col.names = c("Reference",
@@ -301,14 +293,8 @@ vcf_with_metadata %>%
   filter(!is.na(gene)) %>%
   mutate(pos = as.character(pos)) %>%
   mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Inca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Manacor", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Palma", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Santa_Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
   filter(gene == "N") %>%
   tally() %>%
@@ -319,7 +305,7 @@ vcf_with_metadata %>%
        x = "Position",
        y = "Count") +
   labs(fill = "Region") +
-  scale_fill_manual(values = c("dodgerblue3", "grey50", "palegreen4")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(axis.text.x = element_text(angle = 90),
         panel.border = element_rect(fill = NA))
  
@@ -330,14 +316,8 @@ vcf_with_metadata %>%
   filter(!is.na(gene)) %>%
   mutate(pos = as.character(pos)) %>%
   mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Inca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Manacor", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Palma", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Santa_Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
   filter(gene == "ORF3a") %>%
   tally() %>%
@@ -348,7 +328,7 @@ vcf_with_metadata %>%
        x = "Position",
        y = "Count") +
   labs(fill = "Region") +
-  scale_fill_manual(values = c("dodgerblue3", "grey50", "palegreen4")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(axis.text.x = element_text(angle = 90),
         panel.border = element_rect(fill = NA))
  
