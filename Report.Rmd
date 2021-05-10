@@ -1,5 +1,5 @@
 ---
-title: 'Analyzing SARS-CoV-2 variants among the Spanish Islands and mainland'
+title: "Comparing SARS-CoV-2 variants between the Spanish capital and the Balearic Islands"
 author: "Alexandra Palacios"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
@@ -8,7 +8,7 @@ bibliography: references.bib
 params:
   gff_file_path: "data/metadata/sars_refgenome_annotation.gff"
   vcf_dir_path: "data/11_vcf_output_for_R"
-  sra_runtable_path: "data/00_sra_runtable/SraRunTable_Balearic_Islands_Madrid.txt"
+  sra_runtable_path: "data/00_sra_runtable/SraRunTable_Balearic_Islands_Mainland.txt"
 ---
 
 ```{r setup, include = FALSE}
@@ -30,7 +30,7 @@ This is a report on SARS-CoV-2, including some variant analysis [@koyama2020vari
 
 ## Data Collection
 
-I selected and downloaded a total of 150 SARS-CoV-2 samples from the PRJEB43166 SRA Bioproject located in the NCBI SRA SARS-CoV-2 Bioproject list. This bioproject collected SARS-CoV-2 variant data from individuals of different ages, sex, and geographic region within Spain. 100 of the samples I selected came from localities within two of the Balearic Islands in Spain and were collected by Servicio de Microbiología, Hospital Universitario Son Espases and SeqCOVID-Spain consortium. The other 50 samples came from the Spanish capital, Madrid, and were collected by Hospital General Universitario Gregorio Marañón and SeqCOVID-Spain consortium.
+I selected and downloaded a total of 150 SARS-CoV-2 samples from the PRJEB43166 SRA Bioproject located in the NCBI SRA SARS-CoV-2 Bioproject list. This bioproject collected SARS-CoV-2 variant data from individuals of different ages, sex, and geographic region within Spain. 100 of the samples I selected came from localities within two of the Balearic Islands in Spain (Ibiza and Mallorca) and were collected by Servicio de Microbiología, Hospital Universitario Son Espases and SeqCOVID-Spain consortium. The other 50 samples came from the Spanish capital, Madrid, and were collected by Hospital General Universitario Gregorio Marañón and SeqCOVID-Spain consortium.
 
 ## Variant Analysis
 
@@ -108,11 +108,15 @@ vcf_with_metadata %>%
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
   group_by(sample, `geographic_location_(region_and_locality)`) %>%
   tally() %>%
-    ggplot(aes(x = `geographic_location_(region_and_locality)`)) +
+    ggplot(aes(x = `geographic_location_(region_and_locality)`,
+           fill = `geographic_location_(region_and_locality)`)) +
     geom_bar() +
-  labs(title = "Count of samples by geographic region", x = "Region", y = "Count") +
+  labs(title = "Count of samples by geographic region",
+       x = "Region",
+       y = "Count") +
+  labs(fill = "Region") +
+  scale_fill_manual(values = c("dodgerblue3",  "palegreen4", "grey50", "palegreen4",  "palegreen4", "palegreen4")) +
   theme(axis.text.x = element_text(angle = 90),
-        panel.background = element_blank(),
         panel.border = element_rect(fill = NA))
 ```
 
@@ -159,19 +163,22 @@ vcf_with_metadata %>%
         panel.border = element_rect(fill = NA))
 ```
 
-``` {r spike-variant-Majorca-figure}
+``` {r spike-variant-Mallorca-figure}
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>%
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-  filter(`geographic_location_(region_and_locality)` != "Ibiza") %>%
-  filter(`geographic_location_(region_and_locality)` != "Madrid") %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("Inca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+    mutate(`geographic_location_(region_and_locality)` = gsub("Manacor", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+    mutate(`geographic_location_(region_and_locality)` = gsub("Palma", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+    mutate(`geographic_location_(region_and_locality)` = gsub("Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  filter(`geographic_location_(region_and_locality)` == "Mallorca") %>%
   tally() %>%
   group_by(gene) %>%
   tally() %>%
   ggplot(aes(x = gene, y = n, fill = gene)) +
   geom_col() +
-  labs(title = "Count of Distinct SNPs in Known SARS-CoV-2 Genes from Majorca",
+  labs(title = "Count of Distinct SNPs in Known SARS-CoV-2 Genes from Mallorca",
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
@@ -202,19 +209,149 @@ vcf_with_metadata %>%
 
 # Tables
 
-``` {r spike-variant-table}
+``` {r spike-variant-Madrid-table}
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>%
-  group_by(ref, alt, pos, gene) %>%
+  group_by(ref, alt, pos, gene, `geographic_location_(region_and_locality)`) %>%
+  filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
   filter(gene == "S") %>%
   tally() %>%
-  select(ref, alt, pos, gene, n) %>%
+  select(ref, alt, pos, gene, `geographic_location_(region_and_locality)`, n) %>%
   knitr::kable(col.names = c("Reference",
                              "Alternate",
                              "Position",
                              "Gene",
+                             "Region",
                              "Count"),
                align = "c")
+```
+
+``` {r spike-variants-figure}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>%
+  mutate(pos = as.character(pos)) %>%
+  mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Inca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Manacor", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Palma", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Santa_Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
+  filter(gene == "N") %>%
+  tally() %>%
+  filter(n >= 2) %>%
+  ggplot(aes(x = pos, y = n, fill = `geographic_location_(region_and_locality)`)) +
+  geom_col() +
+  labs(title = "Count of SNPs per position in the S gene for each region",
+       x = "Position",
+       y = "Count") +
+  labs(fill = "Region") +
+  scale_fill_manual(values = c("dodgerblue3", "grey50", "palegreen4")) +
+  theme(axis.text.x = element_text(angle = 90),
+        panel.border = element_rect(fill = NA))
+ 
+```
+
+``` {r spike-variant-Mallorca-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>%
+  filter(`geographic_location_(region_and_locality)` != "Madrid") %>%
+  filter(`geographic_location_(region_and_locality)` != "Ibiza") %>%
+  mutate(Region = rep("Mallorca")) %>%
+  group_by(ref, alt, pos, gene, Region) %>%
+  filter(gene == "S") %>%
+  tally() %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+``` {r spike-variant-Ibiza-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>%
+  group_by(ref, alt, pos, gene, `geographic_location_(region_and_locality)`) %>%
+  filter(`geographic_location_(region_and_locality)` == "Ibiza") %>%
+  filter(gene == "S") %>%
+  tally() %>%
+  select(ref, alt, pos, gene, `geographic_location_(region_and_locality)`, n) %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+```{r sample-table}
+vcf_with_metadata %>%
+  group_by(sample) %>%
+  tally()
+```
+
+``` {r nucleocapsid-variants-figure}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>%
+  mutate(pos = as.character(pos)) %>%
+  mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Inca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Manacor", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Palma", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Santa_Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
+  filter(gene == "N") %>%
+  tally() %>%
+  filter(n >= 2) %>%
+  ggplot(aes(x = pos, y = n, fill = `geographic_location_(region_and_locality)`)) +
+  geom_col() +
+  labs(title = "Count of SNPs per position in the N gene for each region",
+       x = "Position",
+       y = "Count") +
+  labs(fill = "Region") +
+  scale_fill_manual(values = c("dodgerblue3", "grey50", "palegreen4")) +
+  theme(axis.text.x = element_text(angle = 90),
+        panel.border = element_rect(fill = NA))
+ 
+```
+
+``` {r ORF3a-variants-figure}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>%
+  mutate(pos = as.character(pos)) %>%
+  mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Inca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Manacor", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Palma", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Santa_Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
+  filter(gene == "ORF3a") %>%
+  tally() %>%
+  filter(n >= 2) %>%
+  ggplot(aes(x = pos, y = n, fill = `geographic_location_(region_and_locality)`)) +
+  geom_col() +
+  labs(title = "Count of SNPs per position in the ORF3a gene for each region",
+       x = "Position",
+       y = "Count") +
+  labs(fill = "Region") +
+  scale_fill_manual(values = c("dodgerblue3", "grey50", "palegreen4")) +
+  theme(axis.text.x = element_text(angle = 90),
+        panel.border = element_rect(fill = NA))
+ 
 ```
 
 ```{r gene-table}
@@ -229,25 +366,5 @@ gene_table %>%
 ```
 
 **Table 2**: Gene names, locations, and lengths in the SARS-CoV-2 genome. Higher SNP counts in the S and N genes may be related to the larger size of these genes.
-
-``` {r spike-variant-Madrid-table}
-vcf_with_metadata %>%
-  filter(!is.na(gene)) %>%
-  group_by(ref, alt, pos, gene, `geographic_location_(region_and_locality)`) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-  filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
-  tally() %>%
-  select(ref, alt, pos, gene, `geographic_location_(region_and_locality)`, n) %>%
-  knitr::kable(col.names = c("Reference",
-                             "Alternate",
-                             "Position",
-                             "Gene",
-                             "Region",
-                             "Count"),
-               align = "c")
-```
-
-**Table X**: Counts of individual variants for the spike protein from all 150 samples.
-
 
 # Sources Cited
