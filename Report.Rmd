@@ -77,6 +77,8 @@ vcf_with_metadata <- add_genes_metadata_to_vcfstack(
   sra_runtable_path = params$sra_runtable_path,
   stacked_vcf = stacked_vcfs,
   cleaned_genes_table = gene_table)
+
+vcf_with_metadata <- vcf_with_metadata[!vcf_with_metadata$sample == "ERR5704487", ]
 ```
 
 ```{r sex-figure}
@@ -96,7 +98,7 @@ vcf_with_metadata %>%
   group_by(sample, Host_Age) %>%
   tally() %>%
     ggplot(aes(x = Host_Age)) +
-    geom_histogram(bins = 25) +
+    geom_histogram() +
   labs(title = "Histogram of samples by host age", x = "Host Age", y = "Frequency") +
   theme_few()
 ```
@@ -158,7 +160,7 @@ vcf_with_metadata %>%
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
-  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3","darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
@@ -179,7 +181,7 @@ vcf_with_metadata %>%
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
-  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
@@ -199,7 +201,7 @@ vcf_with_metadata %>%
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
-  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "darkseagreen", "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
@@ -211,7 +213,7 @@ vcf_with_metadata %>%
   filter(!is.na(gene)) %>%
   group_by(ref, alt, pos, gene, `geographic_location_(region_and_locality)`) %>%
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-filter(`geographic_location_(region_and_locality)` != "Madrid") %>%
+filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
   filter(gene == "S") %>%
   tally() %>%
   select(ref, alt, pos, gene, `geographic_location_(region_and_locality)`, n) %>%
@@ -232,11 +234,11 @@ vcf_with_metadata %>%
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
    mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
-  filter(gene == "N") %>%
+  filter(gene == "S") %>%
   tally() %>%
-  filter(n >= 2) %>%
+  filter(n >= 10) %>%
   ggplot(aes(x = pos, y = n, fill = `geographic_location_(region_and_locality)`)) +
-  geom_col() +
+  geom_col(position = "dodge") +
   labs(title = "Count of SNPs per position in the S gene for each region",
        x = "Position",
        y = "Count") +
@@ -298,9 +300,9 @@ vcf_with_metadata %>%
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
   filter(gene == "N") %>%
   tally() %>%
-  filter(n >= 2) %>%
+  filter(n >= 10) %>%
   ggplot(aes(x = pos, y = n, fill = `geographic_location_(region_and_locality)`)) +
-  geom_col() +
+  geom_col(position = "dodge") +
   labs(title = "Count of SNPs per position in the N gene for each region",
        x = "Position",
        y = "Count") +
@@ -323,7 +325,7 @@ vcf_with_metadata %>%
   tally() %>%
   filter(n >= 2) %>%
   ggplot(aes(x = pos, y = n, fill = `geographic_location_(region_and_locality)`)) +
-  geom_col() +
+  geom_col(position = "dodge") +
   labs(title = "Count of SNPs per position in the ORF3a gene for each region",
        x = "Position",
        y = "Count") +
