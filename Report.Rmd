@@ -1,5 +1,5 @@
 ---
-title: "Comparing SARS-CoV-2 variants between the Spanish capital and the Balearic Islands"
+title: "Examining SARS-CoV-2 variant data in the Spanish capital and the Balearic Islands"
 author: "Alexandra Palacios"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
@@ -20,25 +20,20 @@ knitr::opts_chunk$set(echo = FALSE,
 
 # Background and Overview
 
+In December of 2019, the first few cases of the novel SARS-CoV-2 virus began circulating around Wuhan, China. In the following months, the virus made its way across country boundaries and was eventually declared a worldwide pandemic by the World Health Organization on March 11th, 2020. The very first SARS-CoV-2 case in Spain was reported  on January 31st, 2020 in the Canary Islands, which are located off the coast of West Africa [@ferrer2020covid]. This first case from a German citizen was linked to a cluster of cases from Bavaria [@spiteri2020first]. Nine days later on February 9th, 2020 the first few cases were reported in the city of Palma on the island of Mallorca, in the Balearic Islands [@ferrer2020covid]. Then, on February 24th, 2020 the first cases of the virus were reported in the Spanish mainland [@ferrer2020covid]. Several weeks later, Spain, along with a couple other countries in western Europe, became the epicenter of the pandemic [henriquez2020first]. During this time, strict travel bans were set in place for international and national travel within Spain. 
 
-Here, I analyzed SARS-CoV-2 variants in regions within the different Spanish Islands and compared them with variants found in the Spanish capital, Madrid. 
-
-
-This is a report on SARS-CoV-2, including some variant analysis [@koyama2020variant].
+During this unique time, inhabitants of the Balearic Islands found themselves in a state of isolation. The Balearic Islands are a popular tourist spot in the Mediterranean Sea, but due to the travel restrictions, inhabitants of the islands not only found themselves isolated from the Spanish mainland, but also from island to island [henriquez2020first]; [eguiluz2020risk]. Since then, travel restrictions for these islands have fluctuated in 
+severity and as of May 2021, tourism to the islands is once again permitted for international travelers from certain countries. However, it is not known if this period isolation has had a lasting impact on the variants present in individuals on the islands and how much they may differ from those present in the Spanish mainland. Here, I analyzed SARS-CoV-2 variants in regions within the Balearic Islands of Ibiza and Mallorca, and compared them with variants found in the Spanish capital, Madrid. After downloading fastq data from 150 samples and configuring them into vcf files using a bash-pipeline adapted from @koyama2020variant and parsing out SARS-CoV-2 variants in R, I found several variants from the island of Ibiza that were not found in Mallorca or Madrid. Additinally, the variants found in Mallorca and Madrid are also ones commonly found in Europe while those from Ibiza were not commonly found anywhere else. One variant that was common across all regions was the 23403 A > G variant in the spike protein, which is also commonly found elsewhere in Europe.
 
 # Methods
 
 ## Data Collection
 
-I selected and downloaded a total of 150 SARS-CoV-2 samples from the PRJEB43166 SRA Bioproject located in the NCBI SRA SARS-CoV-2 Bioproject list. This bioproject collected SARS-CoV-2 variant data from individuals of different ages, sex, and geographic region within Spain. 100 of the samples I selected came from localities within two of the Balearic Islands in Spain (Ibiza and Mallorca) and were collected by Servicio de Microbiología, Hospital Universitario Son Espases and SeqCOVID-Spain consortium. The other 50 samples came from the Spanish capital, Madrid, and were collected by Hospital General Universitario Gregorio Marañón and SeqCOVID-Spain consortium.
+I selected and downloaded a total of 150 SARS-CoV-2 samples from the NCBI Bioproject titled "WGS of SARS-CoV-2 circulating in Spain". The SRA Bioproject ID is PRJEB43166 and samples in this project were wequenced by the SeqCOVID-Spain consortium. This bioproject collected SARS-CoV-2 variant data from individuals of different ages, sex, and geographic regions within Spain. 100 of the samples I selected came from localities within two of the Balearic Islands in Spain (Ibiza and Mallorca) and were collected by Servicio de Microbiología, Hospital Universitario Son Espases. The other 50 samples came from the Spanish capital, Madrid, and were collected by Hospital General Universitario Gregorio Marañón. All samples were originally collected from individuals between January 01, 2021 and February 28, 2021.
 
 ## Variant Analysis
 
-Using a bash pipeline created by [@koyama2020variant] and modified by Naupaka Zimmerman, I downloaded all the raw Ilumina fastq data selected from the SRA Bioproject, checked the data quality, trimmed unwanted sequence data, indexed and mapped sequences against the SARS-CoV-2 reference genome, sorted and processed reads, and configured reads to be processed in R as vcf files. The SARS-CoV-2 reference genome came from the NCBI This entire pipeline was driven by a Makefile. 
-
-Next, I loaded in, tidied, and stacked all of the vcf files in R, loaded in a gff file with genome annotations
-
-See the set of tutorials on the [vcfR package website](https://knausb.github.io/vcfR_documentation/index.html).
+Using a bash pipeline created by @koyama2020variant and modified by Naupaka Zimmerman, I downloaded all the raw Ilumina fastq data selected from the SRA Bioproject, checked the data quality, trimmed unwanted sequence data, indexed and mapped sequences against the SARS-CoV-2 reference genome, sorted and processed reads, and configured reads to be processed in R as vcf files [@koyama2020variant]. Using the vcfR package in R [@vcfR1; @vcfR2], I modified all vcf files to create a dataframe that included variant data along with genome annotations and metadata of the samples from the NCBI Bioproject. Finally, variants for each region and gene were parsed and plotted using the dplyr, ggplot2, and ggthemes packages in R [@dplyr; @ggplot2; @ggthemes]. Using This entire pipeline was driven by a Makefile. 
 
 # Results
 
@@ -78,7 +73,8 @@ vcf_with_metadata <- add_genes_metadata_to_vcfstack(
   stacked_vcf = stacked_vcfs,
   cleaned_genes_table = gene_table)
 
-vcf_with_metadata <- vcf_with_metadata[!vcf_with_metadata$sample == "ERR5704487", ]
+vcf_with_metadata <- vcf_with_metadata[
+  !vcf_with_metadata$sample == "ERR5704487", ]
 ```
 
 ```{r sex-figure}
@@ -91,21 +87,27 @@ vcf_with_metadata %>%
   labs(title = "Count of samples by sex", x = "Sex", y = "Count") +
   theme_few()
 ```
+**Figure 1**: Count of individuals in the sample population by sex.
+
 
 ```{r age-figure}
-# create bar plot that organizes samples by age group
+# create a histogram that organizes samples by age group
 vcf_with_metadata %>%
   group_by(sample, Host_Age) %>%
   tally() %>%
     ggplot(aes(x = Host_Age)) +
     geom_histogram() +
-  labs(title = "Histogram of samples by host age", x = "Host Age", y = "Frequency") +
+  labs(title = "Histogram of samples by host age",
+       x = "Host Age",
+       y = "Frequency") +
   theme_few()
 ```
+**Figure 2**: Distribution of individuals in the sample population by age.
 
 
 ```{r region-figure}
-# create bar plot that organizes samples by Spanish region
+# create bar plot that organizes samples by region in Spain and color code
+# regions to demonstrate which regions come from the same island
 vcf_with_metadata %>%
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
   group_by(sample, `geographic_location_(region_and_locality)`) %>%
@@ -117,19 +119,26 @@ vcf_with_metadata %>%
        x = "Region",
        y = "Count") +
   labs(fill = "Region") +
-  scale_fill_manual(values = c("dodgerblue3",  "palegreen4", "grey50", "palegreen4",  "palegreen4", "palegreen4")) +
+  scale_fill_manual(values = c("dodgerblue3",
+                               "palegreen4",
+                               "grey50",
+                               "palegreen4",
+                               "palegreen4",
+                               "palegreen4")) +
   theme(axis.text.x = element_text(angle = 90),
         panel.border = element_rect(fill = NA))
 ```
+**Figure 3**: Counts of samples from each of the geographic regions represented in the sample population. All regions in green are localities within the island of Mallorca, regions in blue come from the island of Ibiza, and regions in grey come from the Spanish capital, Madrid.
+
 
 ```{r snp-plot}
-# create a plot of unique SNP locations within each gene across all samples
+# create a bar plot of unique SNP locations within each gene across all samples
 vcf_with_metadata %>%
-  filter(!is.na(gene)) %>% # get rid of SNPs not in gene regions
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
   group_by(gene, pos) %>%
-  tally() %>% # this gives a column n for the number of gene by position
+  tally() %>% # create column n for the number of gene by position
   group_by(gene) %>%
-  tally() %>% # this collapses that down to the number of unique SNP locations
+  tally() %>% # collapse down to count of unique SNPs per gene
   ggplot(aes(x = gene,
              y = n,
              fill = gene)) +
@@ -138,206 +147,454 @@ vcf_with_metadata %>%
          x = "Gene Name",
          y = "Count") +
   labs(fill = "Gene") +
-  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black",
+                               "dodgerblue3",
+                               "grey50",
+                               "palegreen4",
+                               "cadetblue3",
+                               "lightgoldenrod3",
+                               "darkseagreen",
+                               "thistle",
+                               "grey70",
+                               "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
+**Figure 4**: Frequencies of distinct SNPs of SARS-CoV-2 genes for the whole sample population. 
 
-**Figure 1**: N and S genes have more unique SNPs in the set of samples analyzed.
 
-``` {r spike-variant-Mainland-figure}
+``` {r spike-variant-madrid-figure}
+# create a bar plot of unique SNP locations within each gene in samples
+# collected from Madrid, Spain
 vcf_with_metadata %>%
-  filter(!is.na(gene)) %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
   filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
-  tally() %>%
+  # include only Madrid samples
+  tally() %>% # create column n for the number of gene by position
   group_by(gene) %>%
-  tally() %>%
+  tally() %>% # collapse down to count of unique SNPs per gene
   ggplot(aes(x = gene, y = n, fill = gene)) +
   geom_col() +
   labs(title = "Count of Distinct SNPs in Known SARS-CoV-2 Genes from Madrid",
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
-  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3","darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
+**Figure 4**: Frequencies of distinct SNPs of SARS-CoV-2 genes for samples collected from Madrid, Spain. 
 
-``` {r spike-variant-Mallorca-figure}
+
+``` {r spike-variant-mallorca-figure}
+# create a bar plot of unique SNP locations within each gene in samples
+# collected from all localities within the island of Mallorca
 vcf_with_metadata %>%
-  filter(!is.na(gene)) %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>% # change names of all
+  # localities within Mallorca to just Mallorca
   filter(`geographic_location_(region_and_locality)` == "Mallorca") %>%
-  tally() %>%
+  # include only Mallorca samples
+  tally() %>% # create column n for the number of gene by position
   group_by(gene) %>%
-  tally() %>%
+  tally() %>% # collapse down to count of unique SNPs per gene
   ggplot(aes(x = gene, y = n, fill = gene)) +
   geom_col() +
   labs(title = "Count of Distinct SNPs in Known SARS-CoV-2 Genes from Mallorca",
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
-  scale_fill_manual(values = c("dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("dodgerblue3", "grey50",
+                               "palegreen4", "cadetblue3",
+                               "lightgoldenrod3", "darkseagreen",
+                               "thistle", "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
+**Figure 5**: Frequencies of distinct SNPs of SARS-CoV-2 genes for samples collected from all localities within the island of Mallorca.
 
-``` {r spike-variant-Ibiza-figure}
+
+``` {r spike-variant-ibiza-figure}
+# create a bar plot of unique SNP locations within each gene in samples
+# collected from all localities within the island of Ibiza
 vcf_with_metadata %>%
-  filter(!is.na(gene)) %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
   filter(`geographic_location_(region_and_locality)` == "Ibiza") %>%
-  tally() %>%
+  # include only Ibiza samples
+  tally() %>% # create column n for the number of gene by position
   group_by(gene) %>%
-  tally() %>%
+  tally() %>% # collapse down to count of unique SNPs per gene
   ggplot(aes(x = gene, y = n, fill = gene)) +
   geom_col() +
   labs(title = "Count of Distinct SNPs in Known SARS-CoV-2 Genes from Ibiza",
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
-  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "darkseagreen", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3",
+                               "grey50", "palegreen4",
+                               "cadetblue3", "darkseagreen",
+                               "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
+**Figure 6**: Frequencies of distinct SNPs of SARS-CoV-2 genes for samples collected from all localities within the island of Ibiza.
 
-# Tables
-
-``` {r spike-variant-Madrid-table}
-vcf_with_metadata %>%
-  filter(!is.na(gene)) %>%
-  group_by(ref, alt, pos, gene, `geographic_location_(region_and_locality)`) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
-  filter(gene == "S") %>%
-  tally() %>%
-  select(ref, alt, pos, gene, `geographic_location_(region_and_locality)`, n) %>%
-  knitr::kable(col.names = c("Reference",
-                             "Alternate",
-                             "Position",
-                             "Gene",
-                             "Region",
-                             "Count"),
-               align = "c")
-```
 
 ``` {r spike-variants-figure}
+# create a bar plot showing the most common SNPs in the spike protein gene that
+# are found in each region
 vcf_with_metadata %>%
-  filter(!is.na(gene)) %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
   mutate(pos = as.character(pos)) %>%
   mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
+  # change column to have position number followed by the mutation
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-   mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+   mutate(`geographic_location_(region_and_locality)` = gsub(
+     "Inca|Manacor|Palma|Santa Ponca",
+     "Mallorca",
+     `geographic_location_(region_and_locality)`)) %>%
+  # change names of all localities within Mallorca to just Mallorca
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
-  filter(gene == "S") %>%
+  filter(gene == "S") %>% # only include SNPs from S gene
   tally() %>%
-  filter(n >= 10) %>%
-  ggplot(aes(x = pos, y = n, fill = `geographic_location_(region_and_locality)`)) +
+  filter(n >= 2) %>%
+  ggplot(aes(x = pos,
+             y = n,
+             fill = `geographic_location_(region_and_locality)`)) +
   geom_col(position = "dodge") +
   labs(title = "Count of SNPs per position in the S gene for each region",
        x = "Position",
        y = "Count") +
   labs(fill = "Region") +
-  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3",
+                               "grey50", "palegreen4",
+                               "cadetblue3", "lightgoldenrod3",
+                               "darkseagreen", "thistle",
+                               "grey70",  "slateblue")) +
   theme(axis.text.x = element_text(angle = 90),
         panel.border = element_rect(fill = NA))
  
 ```
+**Figure 7**: Frequencies of the most common SNPs within the spike protein gene for each region. All SNPs represented here have frequencies of greater than 10 occurrences.
 
-``` {r spike-variant-Mallorca-table}
-vcf_with_metadata %>%
-  filter(!is.na(gene)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
- mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
-  group_by(ref, alt, pos, gene, `geographic_location_(region_and_locality)`) %>%
-  filter(`geographic_location_(region_and_locality)` == "Mallorca") %>%
-  filter(gene == "S") %>%
-  tally() %>%
-  knitr::kable(col.names = c("Reference",
-                             "Alternate",
-                             "Position",
-                             "Gene",
-                             "Region",
-                             "Count"),
-               align = "c")
-```
-
-``` {r spike-variant-Ibiza-table}
-vcf_with_metadata %>%
-  filter(!is.na(gene)) %>%
-  group_by(ref, alt, pos, gene, `geographic_location_(region_and_locality)`) %>%
-  filter(`geographic_location_(region_and_locality)` == "Ibiza") %>%
-  filter(gene == "S") %>%
-  tally() %>%
-  select(ref, alt, pos, gene, `geographic_location_(region_and_locality)`, n) %>%
-  knitr::kable(col.names = c("Reference",
-                             "Alternate",
-                             "Position",
-                             "Gene",
-                             "Region",
-                             "Count"),
-               align = "c")
-```
-
-```{r sample-table}
-vcf_with_metadata %>%
-  group_by(sample) %>%
-  tally()
-```
 
 ``` {r nucleocapsid-variants-figure}
+# create a bar plot showing the most common SNPs in the nucleocapsid gene that
+# are found in each region
 vcf_with_metadata %>%
-  filter(!is.na(gene)) %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
   mutate(pos = as.character(pos)) %>%
   mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
+  # change column to have position number followed by the mutation
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Inca|Manacor|Palma|Santa Ponca",
+    "Mallorca",
+    `geographic_location_(region_and_locality)`)) %>%
+  # change names of all localities within Mallorca to just Mallorca
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
-  filter(gene == "N") %>%
+  filter(gene == "N") %>% # only include SNPs from N gene
   tally() %>%
-  filter(n >= 10) %>%
-  ggplot(aes(x = pos, y = n, fill = `geographic_location_(region_and_locality)`)) +
+  filter(n >= 2) %>%
+  ggplot(aes(x = pos,
+             y = n,
+             fill = `geographic_location_(region_and_locality)`)) +
   geom_col(position = "dodge") +
   labs(title = "Count of SNPs per position in the N gene for each region",
        x = "Position",
        y = "Count") +
   labs(fill = "Region") +
-  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3",
+                               "grey50", "palegreen4",
+                               "cadetblue3", "lightgoldenrod3",
+                               "darkseagreen", "thistle",
+                               "grey70",  "slateblue")) +
   theme(axis.text.x = element_text(angle = 90),
         panel.border = element_rect(fill = NA))
  
 ```
+**Figure 8**: Frequencies of the most common SNPs within the nucleocapsid gene for each region. All SNPs represented here have frequencies of greater than 10 occurrences.
 
-``` {r ORF3a-variants-figure}
+
+``` {r orf3a-variants-figure}
+# create a bar plot showing the most common SNPs in the ORF3a gene that are
+# found in each region
 vcf_with_metadata %>%
-  filter(!is.na(gene)) %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
   mutate(pos = as.character(pos)) %>%
   mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
+  # change column to have position number followed by the mutation
   mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
+    "Inca|Manacor|Palma|Santa Ponca",
+    "Mallorca",
+    `geographic_location_(region_and_locality)`)) %>%
+  # change names of all localities within Mallorca to just Mallorca
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
-  filter(gene == "ORF3a") %>%
+  filter(gene == "ORF3a") %>% # only include SNPs from ORF3a gene
   tally() %>%
   filter(n >= 2) %>%
-  ggplot(aes(x = pos, y = n, fill = `geographic_location_(region_and_locality)`)) +
+  ggplot(aes(x = pos,
+             y = n,
+             fill = `geographic_location_(region_and_locality)`)) +
   geom_col(position = "dodge") +
   labs(title = "Count of SNPs per position in the ORF3a gene for each region",
        x = "Position",
        y = "Count") +
   labs(fill = "Region") +
-  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "lightgoldenrod3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3",
+                               "grey50", "palegreen4",
+                               "cadetblue3", "lightgoldenrod3",
+                               "darkseagreen", "thistle",
+                               "grey70",  "slateblue")) +
   theme(axis.text.x = element_text(angle = 90),
         panel.border = element_rect(fill = NA))
  
 ```
+**Figure 9**: Frequencies of the most common SNPs within the ORF3a gene for each region. All SNPs represented here have frequencies of greater than 10 occurrences.
 
+
+# Tables
+
+
+**Table 1**: Frequencies of all SNPs found within the spike protein gene from samples collected in Madrid
+``` {r spike-variant-madrid-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
+  group_by(ref, alt,
+           pos, gene,
+           `geographic_location_(region_and_locality)`) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
+  # include only samples from Madrid
+  filter(gene == "S") %>% # only include SNPs from S gene
+  tally() %>%
+  select(ref, alt,
+         pos, gene,
+         `geographic_location_(region_and_locality)`, n) %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+
+**Table 2**: Frequencies of all SNPs found within the spike protein gene from samples collected in Mallorca
+``` {r spike-variant-mallorca-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+ mutate(`geographic_location_(region_and_locality)` = gsub(
+   "Inca|Manacor|Palma|Santa Ponca",
+   "Mallorca",
+   `geographic_location_(region_and_locality)`)) %>%
+  # change names of all localities within Mallorca to just Mallorca
+  group_by(ref, alt,
+           pos, gene,
+           `geographic_location_(region_and_locality)`) %>%
+  filter(`geographic_location_(region_and_locality)` == "Mallorca") %>%
+  # include only samples from Mallorca
+  filter(gene == "S") %>% # only include SNPs from S gene
+  tally() %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+
+**Table 3**: Frequencies of all SNPs found within the spike protein gene from samples collected in Ibiza
+``` {r spike-variant-ibiza-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
+  group_by(ref, alt,
+           pos, gene,
+           `geographic_location_(region_and_locality)`) %>%
+  filter(`geographic_location_(region_and_locality)` == "Ibiza") %>%
+  # include only samples from Ibiza
+  filter(gene == "S") %>% # only include SNPs from S gene
+  tally() %>%
+  select(ref, alt,
+         pos, gene,
+         `geographic_location_(region_and_locality)`, n) %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+
+**Table 4**: Frequencies of all SNPs found within the nucleocapsid gene from samples collected in Madrid
+``` {r nucleocapsid-variant-madrid-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
+  group_by(ref, alt,
+           pos, gene,
+           `geographic_location_(region_and_locality)`) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
+  # include only samples from Madrid
+  filter(gene == "N") %>% # only include SNPs from N gene
+  tally() %>%
+  select(ref, alt,
+         pos, gene,
+         `geographic_location_(region_and_locality)`, n) %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+
+**Table 5**: Frequencies of all SNPs found within the nucleocapsid gene from samples collected in Mallorca
+``` {r nucleocapsid-variant-mallorca-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+ mutate(`geographic_location_(region_and_locality)` = gsub(
+   "Inca|Manacor|Palma|Santa Ponca",
+   "Mallorca",
+   `geographic_location_(region_and_locality)`)) %>%
+  # change names of all localities within Mallorca to just Mallorca
+  group_by(ref, alt,
+           pos, gene,
+           `geographic_location_(region_and_locality)`) %>%
+  filter(`geographic_location_(region_and_locality)` == "Mallorca") %>%
+  # include only samples from Mallorca
+  filter(gene == "N") %>% # only include SNPs from N gene
+  tally() %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+
+**Table 6**: Frequencies of all SNPs found within the nucleocapsid gene from samples collected in Ibiza
+``` {r nucleocapsid-variant-ibiza-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
+  group_by(ref, alt,
+           pos, gene,
+           `geographic_location_(region_and_locality)`) %>%
+  filter(`geographic_location_(region_and_locality)` == "Ibiza") %>%
+  # include only samples from Ibiza
+  filter(gene == "N") %>% # only include SNPs from N gene
+  tally() %>%
+  select(ref, alt,
+         pos, gene,
+         `geographic_location_(region_and_locality)`, n) %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+
+**Table 7**: Frequencies of all SNPs found within the ORF3a gene from samples collected in Madrid
+``` {r orf3a-variant-madrid-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
+  group_by(ref, alt,
+           pos, gene,
+           `geographic_location_(region_and_locality)`) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
+  # include only samples from Madrid
+  filter(gene == "ORF3a") %>% # only include SNPs from ORF3a gene
+  tally() %>%
+  select(ref, alt,
+         pos, gene,
+         `geographic_location_(region_and_locality)`, n) %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+
+**Table 8**: Frequencies of all SNPs found within the ORF3a gene from samples collected in Mallorca
+``` {r orf3a-variant-mallorca-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+ mutate(`geographic_location_(region_and_locality)` = gsub(
+   "Inca|Manacor|Palma|Santa Ponca",
+   "Mallorca",
+   `geographic_location_(region_and_locality)`)) %>%
+  # change names of all localities within Mallorca to just Mallorca
+  group_by(ref, alt,
+           pos, gene,
+           `geographic_location_(region_and_locality)`) %>%
+  filter(`geographic_location_(region_and_locality)` == "Mallorca") %>%
+  # include only samples from Mallorca
+  filter(gene == "ORF3a") %>% # only include SNPs from ORF3a gene
+  tally() %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+
+**Table 9**: Frequencies of all SNPs found within the ORF3a gene from samples collected in Ibiza
+``` {r orf3a-variant-ibiza-table}
+vcf_with_metadata %>%
+  filter(!is.na(gene)) %>% # take out SNPs not in gene regions
+  group_by(ref, alt,
+           pos, gene,
+           `geographic_location_(region_and_locality)`) %>%
+  filter(`geographic_location_(region_and_locality)` == "Ibiza") %>%
+  # include only samples from Ibiza
+  filter(gene == "ORF3a") %>% # only include SNPs from ORF3a gene
+  tally() %>%
+  select(ref, alt,
+         pos, gene,
+         `geographic_location_(region_and_locality)`, n) %>%
+  knitr::kable(col.names = c("Reference",
+                             "Alternate",
+                             "Position",
+                             "Gene",
+                             "Region",
+                             "Count"),
+               align = "c")
+```
+
+
+**Table 10**: Gene names, locations, and lengths in the SARS-CoV-2 genome. Higher SNP counts in the S and N genes may be related to the larger size of these genes.
 ```{r gene-table}
-# An example table to show the length of each gene using its start and end
+# create a table showing the length of each gene from start to end
 gene_table %>%
   mutate(length = end - start) %>%
   select(gene_name, start, end, length) %>%
@@ -347,6 +604,5 @@ gene_table %>%
                              "Length"))
 ```
 
-**Table 2**: Gene names, locations, and lengths in the SARS-CoV-2 genome. Higher SNP counts in the S and N genes may be related to the larger size of these genes.
 
 # Sources Cited
