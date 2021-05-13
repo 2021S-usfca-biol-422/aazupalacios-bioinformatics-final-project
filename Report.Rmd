@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 # Background and Overview
 
-In December of 2019, the first few cases of the novel SARS-CoV-2 virus began circulating around Wuhan, China. In the following months, the virus made its way across country boundaries and was eventually declared a worldwide pandemic by the World Health Organization on March 11th, 2020. The very first SARS-CoV-2 case in Spain was reported  on January 31st, 2020 in the Canary Islands, which are located off the coast of West Africa [@ferrer2020covid]. This first case from a German citizen was linked to a cluster of cases from Bavaria [@spiteri2020first]. Nine days later on February 9th, 2020 the first few cases were reported in the city of Palma on the island of Mallorca, in the Balearic Islands [@ferrer2020covid]. Then, on February 24th, 2020 the first cases of the virus were reported in the Spanish mainland [@ferrer2020covid]. Several weeks later, Spain, along with a couple other countries in western Europe, became the epicenter of the pandemic [@henriquez2020first]. During this time, strict travel bans were set in place for international and national travel within Spain. 
+In December of 2019, the first few cases of the novel SARS-CoV-2 virus began circulating around Wuhan, China. In the following months, the virus made its way across country boundaries and was eventually declared a worldwide pandemic by the World Health Organization on March 11th, 2020. The very first SARS-CoV-2 case in Spain was reported  on January 31st, 2020 in the Canary Islands [@ferrer2020covid]. This first case from a German citizen was linked to a cluster of cases from Bavaria, Germany [@spiteri2020first]. On February 9th, 2020 the first few cases were reported in the city of Palma on the island of Mallorca, in the Balearic Islands [@ferrer2020covid]. Then, on February 24th, 2020 the first cases of the virus were reported in the Spanish mainland, and the first case in Madrid was reported the next day [@ferrer2020covid]. Several weeks later, Spain, along with a couple other countries in western Europe, became the epicenter of the pandemic [@henriquez2020first]. During this time, strict travel bans were set in place for international and national travel within Spain. 
 
 During this unique time, inhabitants of the Balearic Islands found themselves in a state of isolation. The Balearic Islands are a popular tourist spot in the Mediterranean Sea, but due to the travel restrictions, inhabitants of the islands not only found themselves isolated from the Spanish mainland, but also from island to island [@henriquez2020first]; [@eguiluz2020risk]. Since then, travel restrictions for these islands have fluctuated in 
 severity and as of May 2021, tourism to the islands is once again permitted for international travelers from certain countries. However, it is not known if this period isolation has had a lasting impact on the variants present in individuals on the islands and how much they may differ from those present in the Spanish mainland. Here, I analyzed SARS-CoV-2 variants in regions within the Balearic Islands of Ibiza and Mallorca, and compared them with variants found in the Spanish capital, Madrid. After downloading fastq data from 150 samples and configuring them into vcf files using a bash-pipeline adapted from @koyama2020variant and parsing out SARS-CoV-2 variants in R, I found several variants from the island of Ibiza that were not found in Mallorca or Madrid. Additinally, the variants found in Mallorca and Madrid are also ones commonly found in Europe while those from Ibiza were not commonly found anywhere else. One variant that was common across all regions was the 23403 A > G variant in the spike protein, which is also commonly found elsewhere in Europe.
@@ -46,11 +46,15 @@ For the entire sample population, the frequency of distinct SNPs was greatest fo
 
 The most common SNP for all three regions was the 23403 A > G mutation in the spike protein gene (**Figure 8; Tables 1, 2, 3**). This mutation translates to a D614G mutation in the protein sequence of the spike protein [@koyama2020variant]. Other variants in the spike protein gene that had at least two occurrences in all three regions are 21990 TTTATTA > TTTA, 22227 C > T, 23063 A > T, 23271 C > A, 23604 C > A, 23709 C > T, 24506 T > G, and 24914 G > C (**Figure 8; Tables 1, 2, 3**). Variants that had at least two occurrences in all regions for the nucleocapsid gene are 28280 G > C, 28281 A > T, 28282 T > A, 28881 G > A, 28882 G > A, 28883 G > C, 28932 C > T, 28977 C > T, and 29402 G > T (**Figure 9, Tables 4, 5, 6**). No common variants were present in all three regions for the ORF3a gene (**Figure 10**). 
 
+Additionally
+
 # Discussion
 
-Overall, the data demonstrate that the island of Ibiza has the most distinct SARS-CoV-2 SNP profile out of all three regions analyzed, particularly in the ORF3a and nucleocapsid genes. Given that travel was heavily restricted from the Spanish mainland to the Balearic Islands, it is surprising that samples from Mallorca did not have a similarly distinct SNP profile as its neighboring island. However, by the time all samples were collected, strict travel restrictions from the islands to the Spanish mainland had already been lifted to some extent. This could explain the why Madrid and Mallorca had similar SNP profiles. Ibiza also shared a lot of the same SNPs that were found in Madrid and Mallorca; however, the frequency of distinct SNPs that were only found on Ibiza suggest that Ibiza may have been more isolated from the mainland than Mallorca. The distinct SNPs cound on Ibiza are not commonly found elsewhere in Europe or any part of the world, which suggests that the variants found on Ibiza may have originated there [@koyama2020variant; @pachetti2020emerging].
+The 23403 A > G variant found most commonly in all three regions is also one of the most common spike protein variants found in Europe [@koyama2020variant; @pachetti2020emerging]. This D614G protein sequence change of the spike protein was also found to be one of the most dominant variants in Madrid during the first wave of the pandemic and has also found to be associated with higher death rates in Europe [@viedma2021genomic; @toyoshima2020sars]. Interestingly, the most common international ORF3a variant, 25563 G > T (Q57H protein sequence change), was found in a much lower frequency than other variants in Madrid and Ibiza, and it wasn't found at all in Mallorca [@koyama2020variant; @bianchi2021sars]. A further investigation into the times that these variants first appeared and the times where the travel restrictions in Spain were most strictly enforced could explain why the 23403 A > G variant is present in this sample population and why the the 25563 G > T variant isn't as represented here.
 
-The 
+Overall, the data demonstrate that the island of Ibiza has the most distinct SARS-CoV-2 SNP profile out of all three regions analyzed, particularly in the ORF3a and nucleocapsid genes. Given that travel was heavily restricted from the Spanish mainland to the Balearic Islands, it is surprising that samples from Mallorca did not have a similarly distinct SNP profile as its neighboring island. However, by the time all samples were collected, strict travel restrictions from the islands to the Spanish mainland had already been lifted to some extent. This could explain the why Madrid and Mallorca had similar SNP profiles. Ibiza also shared a lot of the same SNPs that were found in Madrid and Mallorca; however, the frequency of distinct SNPs that were only found on Ibiza suggest that individuals from Ibiza may have been more isolated from the Spanish mainland than Mallorca. The distinct SNPs found on Ibiza are also not commonly found elsewhere in Europe or any part of the world, which could suggest that these variants originated in Ibiza and not elsewhere [@koyama2020variant; @pachetti2020emerging].
+
+Another interesting find is that Mallorca and Madrid seem to have a higher relative frequency of distinct SNPs in the ORF3a gene than Ibiza. Despite having a lower variation in distinct SNPs, Ibiza had much higher occurrences of its most common SNPs for the ORF3a gene than Mallorca and Madrid had for their common SNPs in this gene. This can also suggest that the ORF3a variants found in Ibiza did in fact originate there.
 
 # Figures
 
@@ -120,7 +124,8 @@ vcf_with_metadata %>%
 # create bar plot that organizes samples by region in Spain and color code
 # regions to demonstrate which regions come from the same island
 vcf_with_metadata %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
   group_by(sample, `geographic_location_(region_and_locality)`) %>%
   tally() %>%
     ggplot(aes(x = `geographic_location_(region_and_locality)`,
@@ -180,7 +185,8 @@ vcf_with_metadata %>%
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>% # take out SNPs not in gene regions
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
   filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
   # include only Madrid samples
   tally() %>% # create column n for the number of gene by position
@@ -192,7 +198,8 @@ vcf_with_metadata %>%
        x = "Gene Name",
        y = "Count") +
   labs(fill = "Gene") +
-  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4", "cadetblue3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
+  scale_fill_manual(values = c("black", "dodgerblue3", "grey50", "palegreen4",
+  "cadetblue3", "darkseagreen", "thistle", "grey70",  "slateblue")) +
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
@@ -205,9 +212,11 @@ vcf_with_metadata %>%
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>% # take out SNPs not in gene regions
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
   mutate(`geographic_location_(region_and_locality)` = gsub(
-    "Inca|Manacor|Palma|Santa Ponca", "Mallorca", `geographic_location_(region_and_locality)`)) %>% # change names of all
+  "Inca|Manacor|Palma|Santa Ponca", "Mallorca",
+  `geographic_location_(region_and_locality)`)) %>% # change names of all
   # localities within Mallorca to just Mallorca
   filter(`geographic_location_(region_and_locality)` == "Mallorca") %>%
   # include only Mallorca samples
@@ -236,7 +245,8 @@ vcf_with_metadata %>%
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>% # take out SNPs not in gene regions
   group_by(pos, gene, `geographic_location_(region_and_locality)`) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
   filter(`geographic_location_(region_and_locality)` == "Ibiza") %>%
   # include only Ibiza samples
   tally() %>% # create column n for the number of gene by position
@@ -266,8 +276,9 @@ vcf_with_metadata %>%
   mutate(pos = as.character(pos)) %>%
   mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
   # change column to have position number followed by the mutation
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-   mutate(`geographic_location_(region_and_locality)` = gsub(
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
      "Inca|Manacor|Palma|Santa Ponca",
      "Mallorca",
      `geographic_location_(region_and_locality)`)) %>%
@@ -304,7 +315,8 @@ vcf_with_metadata %>%
   mutate(pos = as.character(pos)) %>%
   mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
   # change column to have position number followed by the mutation
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
   mutate(`geographic_location_(region_and_locality)` = gsub(
     "Inca|Manacor|Palma|Santa Ponca",
     "Mallorca",
@@ -342,7 +354,8 @@ vcf_with_metadata %>%
   mutate(pos = as.character(pos)) %>%
   mutate(pos = paste0(pos, " ", ref, " > ", alt)) %>%
   # change column to have position number followed by the mutation
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
   mutate(`geographic_location_(region_and_locality)` = gsub(
     "Inca|Manacor|Palma|Santa Ponca",
     "Mallorca",
@@ -382,8 +395,9 @@ vcf_with_metadata %>%
   group_by(ref, alt,
            pos, gene,
            `geographic_location_(region_and_locality)`) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
+  filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
   # include only samples from Madrid
   filter(gene == "S") %>% # only include SNPs from S gene
   tally() %>%
@@ -404,8 +418,9 @@ filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
 ``` {r spike-variant-mallorca-table}
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>% # take out SNPs not in gene regions
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
- mutate(`geographic_location_(region_and_locality)` = gsub(
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+ `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
    "Inca|Manacor|Palma|Santa Ponca",
    "Mallorca",
    `geographic_location_(region_and_locality)`)) %>%
@@ -458,8 +473,9 @@ vcf_with_metadata %>%
   group_by(ref, alt,
            pos, gene,
            `geographic_location_(region_and_locality)`) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
+  filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
   # include only samples from Madrid
   filter(gene == "N") %>% # only include SNPs from N gene
   tally() %>%
@@ -480,8 +496,9 @@ filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
 ``` {r nucleocapsid-variant-mallorca-table}
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>% # take out SNPs not in gene regions
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
- mutate(`geographic_location_(region_and_locality)` = gsub(
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+ `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
    "Inca|Manacor|Palma|Santa Ponca",
    "Mallorca",
    `geographic_location_(region_and_locality)`)) %>%
@@ -534,8 +551,9 @@ vcf_with_metadata %>%
   group_by(ref, alt,
            pos, gene,
            `geographic_location_(region_and_locality)`) %>%
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
-filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
+  filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
   # include only samples from Madrid
   filter(gene == "ORF3a") %>% # only include SNPs from ORF3a gene
   tally() %>%
@@ -556,8 +574,9 @@ filter(`geographic_location_(region_and_locality)` == "Madrid") %>%
 ``` {r orf3a-variant-mallorca-table}
 vcf_with_metadata %>%
   filter(!is.na(gene)) %>% # take out SNPs not in gene regions
-  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ", `geographic_location_(region_and_locality)`)) %>%
- mutate(`geographic_location_(region_and_locality)` = gsub(
+  mutate(`geographic_location_(region_and_locality)` = gsub("_", " ",
+  `geographic_location_(region_and_locality)`)) %>%
+  mutate(`geographic_location_(region_and_locality)` = gsub(
    "Inca|Manacor|Palma|Santa Ponca",
    "Mallorca",
    `geographic_location_(region_and_locality)`)) %>%
