@@ -30,3 +30,4 @@ Parts of this pipeline approach are based on the pipeline described in the [Data
 * 2021-05-04: Run new Report.Rmd to process new vcf reads
 * 2021-05-08: Run Makefile with 150 reads from the PRJEB43166 bioproject (100 from Ibiza and Mallorca, 50 from Madrid) and replace output/Report.pdf
 * 2021-05-08: Run new Report.Rmd to process new vcf reads
+* 2021-05-12: Open pull request of finalized report for first assessment
