@@ -20,9 +20,9 @@ knitr::opts_chunk$set(echo = FALSE,
 
 # Background and Overview
 
-In December of 2019, the first few cases of the novel SARS-CoV-2 virus began circulating around Wuhan, China. In the following months, the virus made its way across country boundaries and was eventually declared a worldwide pandemic by the World Health Organization on March 11th, 2020. The very first SARS-CoV-2 case in Spain was reported  on January 31st, 2020 in the Canary Islands, which are located off the coast of West Africa [@ferrer2020covid]. This first case from a German citizen was linked to a cluster of cases from Bavaria [@spiteri2020first]. Nine days later on February 9th, 2020 the first few cases were reported in the city of Palma on the island of Mallorca, in the Balearic Islands [@ferrer2020covid]. Then, on February 24th, 2020 the first cases of the virus were reported in the Spanish mainland [@ferrer2020covid]. Several weeks later, Spain, along with a couple other countries in western Europe, became the epicenter of the pandemic [henriquez2020first]. During this time, strict travel bans were set in place for international and national travel within Spain. 
+In December of 2019, the first few cases of the novel SARS-CoV-2 virus began circulating around Wuhan, China. In the following months, the virus made its way across country boundaries and was eventually declared a worldwide pandemic by the World Health Organization on March 11th, 2020. The very first SARS-CoV-2 case in Spain was reported  on January 31st, 2020 in the Canary Islands, which are located off the coast of West Africa [@ferrer2020covid]. This first case from a German citizen was linked to a cluster of cases from Bavaria [@spiteri2020first]. Nine days later on February 9th, 2020 the first few cases were reported in the city of Palma on the island of Mallorca, in the Balearic Islands [@ferrer2020covid]. Then, on February 24th, 2020 the first cases of the virus were reported in the Spanish mainland [@ferrer2020covid]. Several weeks later, Spain, along with a couple other countries in western Europe, became the epicenter of the pandemic [@henriquez2020first]. During this time, strict travel bans were set in place for international and national travel within Spain. 
 
-During this unique time, inhabitants of the Balearic Islands found themselves in a state of isolation. The Balearic Islands are a popular tourist spot in the Mediterranean Sea, but due to the travel restrictions, inhabitants of the islands not only found themselves isolated from the Spanish mainland, but also from island to island [henriquez2020first]; [eguiluz2020risk]. Since then, travel restrictions for these islands have fluctuated in 
+During this unique time, inhabitants of the Balearic Islands found themselves in a state of isolation. The Balearic Islands are a popular tourist spot in the Mediterranean Sea, but due to the travel restrictions, inhabitants of the islands not only found themselves isolated from the Spanish mainland, but also from island to island [@henriquez2020first]; [@eguiluz2020risk]. Since then, travel restrictions for these islands have fluctuated in 
 severity and as of May 2021, tourism to the islands is once again permitted for international travelers from certain countries. However, it is not known if this period isolation has had a lasting impact on the variants present in individuals on the islands and how much they may differ from those present in the Spanish mainland. Here, I analyzed SARS-CoV-2 variants in regions within the Balearic Islands of Ibiza and Mallorca, and compared them with variants found in the Spanish capital, Madrid. After downloading fastq data from 150 samples and configuring them into vcf files using a bash-pipeline adapted from @koyama2020variant and parsing out SARS-CoV-2 variants in R, I found several variants from the island of Ibiza that were not found in Mallorca or Madrid. Additinally, the variants found in Mallorca and Madrid are also ones commonly found in Europe while those from Ibiza were not commonly found anywhere else. One variant that was common across all regions was the 23403 A > G variant in the spike protein, which is also commonly found elsewhere in Europe.
 
 # Methods
@@ -37,9 +37,20 @@ Using a bash pipeline created by @koyama2020variant and modified by Naupaka Zimm
 
 # Results
 
-Data from the 
+## Demographics of Sample Population
+Of all 150 samples collected, 73 sampels came from females while 77 came from males (**Figure 1**). The majority of samples came from individuals ages 20 to 50 years old, however; samples from individuals ages 1 to 20 and 50 to 100 years old were well represented in this sample population (**Figure 2**). There was also a relatively even representation of samples originating from Madrid, Ibiza, and Mallorca (**Figure 3**). 
+
+## Variant Analysis
+
+For the entire sample population, the frequency of distinct SNPs was greatest for the spike protein gene, followed by the nucleocapsid gene, and the ORF3a gene (**Figure 4**). This trend was also found for the samples collected from Madrid and Mallorca, however; in Ibiza, the ORF8 gene had the same number of distinct SNPs as the ORF3a gene (**Figures 5, 6, 7**). In total, SNPs from the following known SARS-CoV-2 genes are represented in this sample population: E, M, N, ORF10, ORF3a, ORF6, ORF7a, ORF7b, ORF8, S (**Figure 4**). SNPs for the E gene were found in Madrid and Ibiza, SNPs for the ORF6 gene were only found in Mallorca, and SNPs for the ORF7b gene were found in Madrid and Mallorca (**Figures 5, 6, 7**).
+
+The most common SNP for all three regions was the 23403 A > G mutation in the spike protein gene (**Figure 8; Tables 1, 2, 3**). This mutation translates to a D614G mutation in the protein sequence of the spike protein [@koyama2020variant]. Other variants in the spike protein gene that had at least two occurrences in all three regions are 21990 TTTATTA > TTTA, 22227 C > T, 23063 A > T, 23271 C > A, 23604 C > A, 23709 C > T, 24506 T > G, and 24914 G > C (**Figure 8; Tables 1, 2, 3**). Variants that had at least two occurrences in all regions for the nucleocapsid gene are 28280 G > C, 28281 A > T, 28282 T > A, 28881 G > A, 28882 G > A, 28883 G > C, 28932 C > T, 28977 C > T, and 29402 G > T (**Figure 9, Tables 4, 5, 6**). No common variants were present in all three regions for the ORF3a gene (**Figure 10**). 
 
 # Discussion
+
+Overall, the data demonstrate that the island of Ibiza has the most distinct SARS-CoV-2 SNP profile out of all three regions analyzed, particularly in the ORF3a and nucleocapsid genes. Given that travel was heavily restricted from the Spanish mainland to the Balearic Islands, it is surprising that samples from Mallorca did not have a similarly distinct SNP profile as its neighboring island. However, by the time all samples were collected, strict travel restrictions from the islands to the Spanish mainland had already been lifted to some extent. This could explain the why Madrid and Mallorca had similar SNP profiles. Ibiza also shared a lot of the same SNPs that were found in Madrid and Mallorca; however, the frequency of distinct SNPs that were only found on Ibiza suggest that Ibiza may have been more isolated from the mainland than Mallorca. The distinct SNPs cound on Ibiza are not commonly found elsewhere in Europe or any part of the world, which suggests that the variants found on Ibiza may have originated there [@koyama2020variant; @pachetti2020emerging].
+
+The 
 
 # Figures
 
@@ -85,7 +96,7 @@ vcf_with_metadata %>%
     ggplot(aes(x = host_sex)) +
     geom_bar() +
   labs(title = "Count of samples by sex", x = "Sex", y = "Count") +
-  theme_few()
+  theme(panel.border = element_rect(fill = NA))
 ```
 **Figure 1**: Count of individuals in the sample population by sex.
 
@@ -185,7 +196,7 @@ vcf_with_metadata %>%
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
-**Figure 4**: Frequencies of distinct SNPs of SARS-CoV-2 genes for samples collected from Madrid, Spain. 
+**Figure 5**: Frequencies of distinct SNPs of SARS-CoV-2 genes for samples collected from Madrid, Spain. 
 
 
 ``` {r spike-variant-mallorca-figure}
@@ -216,7 +227,7 @@ vcf_with_metadata %>%
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
-**Figure 5**: Frequencies of distinct SNPs of SARS-CoV-2 genes for samples collected from all localities within the island of Mallorca.
+**Figure 6**: Frequencies of distinct SNPs of SARS-CoV-2 genes for samples collected from all localities within the island of Mallorca.
 
 
 ``` {r spike-variant-ibiza-figure}
@@ -244,7 +255,7 @@ vcf_with_metadata %>%
   theme(panel.grid.major = element_line(),
         panel.border = element_rect(fill = NA))
 ```
-**Figure 6**: Frequencies of distinct SNPs of SARS-CoV-2 genes for samples collected from all localities within the island of Ibiza.
+**Figure 7**: Frequencies of distinct SNPs of SARS-CoV-2 genes for samples collected from all localities within the island of Ibiza.
 
 
 ``` {r spike-variants-figure}
@@ -282,7 +293,7 @@ vcf_with_metadata %>%
         panel.border = element_rect(fill = NA))
  
 ```
-**Figure 7**: Frequencies of the most common SNPs within the spike protein gene for each region. All SNPs represented here have frequencies of greater than 10 occurrences.
+**Figure 8**: Frequencies of the most common SNPs within the spike protein gene for each region. All SNPs represented here have frequencies of greater than 10 occurrences.
 
 
 ``` {r nucleocapsid-variants-figure}
@@ -320,7 +331,7 @@ vcf_with_metadata %>%
         panel.border = element_rect(fill = NA))
  
 ```
-**Figure 8**: Frequencies of the most common SNPs within the nucleocapsid gene for each region. All SNPs represented here have frequencies of greater than 10 occurrences.
+**Figure 9**: Frequencies of the most common SNPs within the nucleocapsid gene for each region. All SNPs represented here have frequencies of greater than 10 occurrences.
 
 
 ``` {r orf3a-variants-figure}
@@ -358,7 +369,7 @@ vcf_with_metadata %>%
         panel.border = element_rect(fill = NA))
  
 ```
-**Figure 9**: Frequencies of the most common SNPs within the ORF3a gene for each region. All SNPs represented here have frequencies of greater than 10 occurrences.
+**Figure 10**: Frequencies of the most common SNPs within the ORF3a gene for each region. All SNPs represented here have frequencies of greater than 10 occurrences.
 
 
 # Tables
