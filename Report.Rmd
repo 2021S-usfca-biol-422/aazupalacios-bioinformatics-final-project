@@ -44,9 +44,9 @@ Of all 150 samples collected, 73 sampels came from females while 77 came from ma
 
 For the entire sample population, the frequency of distinct SNPs was greatest for the spike protein gene, followed by the nucleocapsid gene, and the ORF3a gene (**Figure 4**). This trend was also found for the samples collected from Madrid and Mallorca, however; in Ibiza, the ORF8 gene had the same number of distinct SNPs as the ORF3a gene (**Figures 5, 6, 7**). In total, SNPs from the following known SARS-CoV-2 genes are represented in this sample population: E, M, N, ORF10, ORF3a, ORF6, ORF7a, ORF7b, ORF8, S (**Figure 4**). SNPs for the E gene were found in Madrid and Ibiza, SNPs for the ORF6 gene were only found in Mallorca, and SNPs for the ORF7b gene were found in Madrid and Mallorca (**Figures 5, 6, 7**).
 
-The most common SNP for all three regions was the 23403 A > G mutation in the spike protein gene (**Figure 8; Tables 1, 2, 3**). This mutation translates to a D614G mutation in the protein sequence of the spike protein [@koyama2020variant]. Other variants in the spike protein gene that had at least two occurrences in all three regions are 21990 TTTATTA > TTTA, 22227 C > T, 23063 A > T, 23271 C > A, 23604 C > A, 23709 C > T, 24506 T > G, and 24914 G > C (**Figure 8; Tables 1, 2, 3**). Variants that had at least two occurrences in all regions for the nucleocapsid gene are 28280 G > C, 28281 A > T, 28282 T > A, 28881 G > A, 28882 G > A, 28883 G > C, 28932 C > T, 28977 C > T, and 29402 G > T (**Figure 9, Tables 4, 5, 6**). No common variants were present in all three regions for the ORF3a gene (**Figure 10**). 
+The most common SNP for all three regions was the 23403 A > G mutation in the spike protein gene (**Figure 8; Tables 1, 2, 3**). This mutation translates to a D614G mutation in the protein sequence of the spike protein [@koyama2020variant]. Other variants in the spike protein gene that had at least two occurrences in all three regions are 21990 TTTATTA > TTTA, 22227 C > T, 23063 A > T, 23271 C > A, 23604 C > A, 23709 C > T, 24506 T > G, and 24914 G > C (**Figure 8; Tables 1, 2, 3**). Variants that had at least two occurrences in all regions for the nucleocapsid gene are 28280 G > C, 28281 A > T, 28282 T > A, 28881 G > A, 28882 G > A, 28883 G > C, 28932 C > T, 28977 C > T, and 29402 G > T (**Figure 9, Tables 4, 5, 6**). No common variants were present in all three regions for the ORF3a gene (**Figure 10**). Additinally, the count of unique SNPs in Madrid and Mallorca in the ORF3a gene were higher than the count of unique SNPs in Ibiza. However, the frequencies of each distinct SNP in the ORF3a gene did not exceed 5 counts for Madrid and Mallorca, while Ibiza had 3 distinct SNPs that exceeded 20 counts in this gene (**Figure 10; Tables 7, 8, 9**).
 
-Additionally
+All regions had SNPs that weren't found in either of the other regions. However, only Ibiza had SNPs unique to its region that were present in high frequencies (greater than 15 occurrences). The following are all the SNPs unique to Ibiza that were detected at least 15 times in its population: 21855 C > T (S gene), 22909 T > C (S gene), 28651 C > T (N gene), 28747 G > T (N gene), 28869 C > T (N gene), 29422 G > T (N gene), 25505 A > G (ORF3a gene), 25906 G > C (ORF3a gene; **Figures 8, 9, 10; Tables 3, 6, 9**). 
 
 # Discussion
 
@@ -620,19 +620,5 @@ vcf_with_metadata %>%
                              "Count"),
                align = "c")
 ```
-
-
-**Table 10**: Gene names, locations, and lengths in the SARS-CoV-2 genome. Higher SNP counts in the S and N genes may be related to the larger size of these genes.
-```{r gene-table}
-# create a table showing the length of each gene from start to end
-gene_table %>%
-  mutate(length = end - start) %>%
-  select(gene_name, start, end, length) %>%
-  knitr::kable(col.names = c("Gene Name",
-                             "Start",
-                             "End",
-                             "Length"))
-```
-
 
 # Sources Cited
