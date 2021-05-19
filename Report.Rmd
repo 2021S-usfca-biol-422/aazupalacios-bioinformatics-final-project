@@ -33,7 +33,7 @@ I selected and downloaded a total of 150 SARS-CoV-2 samples from the NCBI Biopro
 
 ## Variant Analysis
 
-Using a bash pipeline created by @koyama2020variant and modified by Naupaka Zimmerman, I downloaded all the raw Illumina fastq data selected from the SRA Bioproject, checked the data quality, trimmed unwanted sequence data, indexed and mapped sequences against the SARS-CoV-2 reference genome, sorted and processed reads, and configured reads to be processed in R as vcf files [@koyama2020variant]. Using the vcfR package in R [@vcfR1; @vcfR2], I modified all vcf files to create a dataframe that included variant data along with genome annotations and metadata of the samples from the NCBI Bioproject. Finally, variants for each region and gene were parsed and plotted using the dplyr, ggplot2, and ggthemes packages in R [@dplyr; @ggplot2; @ggthemes]. Using This entire pipeline was driven by a Makefile. 
+Using a bash pipeline created by @koyama2020variant and modified by Naupaka Zimmerman, I downloaded all the raw Illumina fastq data selected from the SRA Bioproject, checked the data quality, trimmed unwanted sequence data, indexed and mapped sequences against the SARS-CoV-2 reference genome, sorted and processed reads, and configured reads to be processed in R as vcf files [@koyama2020variant]. Using the vcfR package in R [@vcfR1; @vcfR2], I modified all vcf files to create a dataframe that included variant data along with genome annotations and metadata of the samples from the NCBI Bioproject. Finally, variants for each region and gene were parsed and plotted using the dplyr, ggplot2, and ggthemes packages in R [@dplyr; @ggplot2; @ggthemes]. This entire pipeline was driven by a Makefile. 
 
 # Results
 
